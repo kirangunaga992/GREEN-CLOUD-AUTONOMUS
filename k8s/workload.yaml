@@ -1,0 +1,86 @@
+# ============================================
+# GreenOps Workload Deployment
+# 
+# IMPORTANT: replicas = 0
+# This is the magic of GreenOps - the workload
+# starts OFF and only scales up when users arrive
+# ============================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green-workload
+  namespace: greenops
+  labels:
+    app: green-workload
+    tier: workload
+spec:
+  replicas: 0                # <-- STARTS AT ZERO!
+  selector:
+    matchLabels:
+      app: green-workload
+  template:
+    metadata:
+      labels:
+        app: green-workload
+        tier: workload
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: workload
+        image: green-workload:latest
+        imagePullPolicy: Never        # Use local image, don't pull
+        ports:
+        - containerPort: 5000
+          name: http
+        env:
+        - name: WORKLOAD_PORT
+          value: "5000"
+        - name: ENVIRONMENT
+          value: "kubernetes"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 15
+          timeoutSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+
+---
+# ============================================
+# Workload Service
+# Gateway sends traffic to this DNS:
+# green-workload-service.greenops.svc.cluster.local
+# ============================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: green-workload-service
+  namespace: greenops
+  labels:
+    app: green-workload
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5000
+    targetPort: 5000
+    protocol: TCP
+    name: http
+  selector:
+    app: green-workload

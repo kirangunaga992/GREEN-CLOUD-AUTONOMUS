@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greenops-api
+  namespace: greenops
+  labels:
+    app: greenops-api
+    tier: control-plane
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: greenops-api
+  template:
+    metadata:
+      labels:
+        app: greenops-api
+        tier: control-plane
+    spec:
+      serviceAccountName: greenops-controller
+      containers:
+      - name: api
+        image: greenops-api:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: BACKEND_HOST
+          value: "0.0.0.0"
+        - name: BACKEND_PORT
+          value: "8000"
+        - name: DEBUG
+          value: "false"
+        - name: MONGO_URI
+          value: "mongodb://mongodb-service.greenops.svc.cluster.local:27017"
+        - name: MONGO_DB_NAME
+          value: "greenops"
+        - name: K8S_NAMESPACE
+          value: "greenops"
+        - name: WORKLOAD_DEPLOYMENT_NAME
+          value: "green-workload"
+        - name: MIN_REPLICAS
+          value: "0"
+        - name: MAX_REPLICAS
+          value: "5"
+        - name: SCALE_UP_CPU_THRESHOLD
+          value: "65"
+        - name: SCALE_DOWN_CPU_THRESHOLD
+          value: "25"
+        - name: TARGET_RPS_PER_POD
+          value: "20"
+        - name: IDLE_SCALE_TO_ZERO_SECONDS
+          value: "60"
+        - name: SCALE_UP_COOLDOWN_SECONDS
+          value: "10"
+        - name: SCALE_DOWN_COOLDOWN_SECONDS
+          value: "60"
+        - name: P_IDLE_WATTS
+          value: "35"
+        - name: P_MAX_WATTS
+          value: "90"
+        - name: CARBON_FACTOR_KG_PER_KWH
+          value: "0.708"
+        - name: ELECTRICITY_COST_PER_KWH
+          value: "8"
+        - name: GATEWAY_URL
+          value: "http://traffic-gateway-service.greenops.svc.cluster.local:5001"
+        - name: WORKLOAD_URL
+          value: "http://green-workload-service.greenops.svc.cluster.local:5000"
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "400Mi"
+          limits:
+            cpu: "800m"
+            memory: "800Mi"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 15
+          timeoutSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: greenops-api-service
+  namespace: greenops
+  labels:
+    app: greenops-api
+spec:
+  type: NodePort
+  ports:
+  - port: 8000
+    targetPort: 8000
+    nodePort: 30800
+    protocol: TCP
+    name: http
+  selector:
+    app: greenops-api

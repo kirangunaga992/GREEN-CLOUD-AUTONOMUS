@@ -1,0 +1,140 @@
+# ============================================
+# Prometheus ConfigMap - Scrape configuration
+# ============================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: greenops
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 10s
+      evaluation_interval: 10s
+
+    scrape_configs:
+      # Scrape GreenOps backend
+      - job_name: 'greenops-api'
+        static_configs:
+          - targets: ['greenops-api-service:8000']
+            labels:
+              service: 'backend'
+              tier: 'control-plane'
+
+      # Scrape Gateway
+      - job_name: 'traffic-gateway'
+        static_configs:
+          - targets: ['traffic-gateway-service:5001']
+            labels:
+              service: 'gateway'
+              tier: 'entry-point'
+
+      # Scrape Workload (dynamic - via pod discovery)
+      - job_name: 'green-workload'
+        kubernetes_sd_configs:
+          - role: pod
+            namespaces:
+              names:
+                - greenops
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: keep
+            regex: green-workload
+          - source_labels: [__meta_kubernetes_pod_ip]
+            target_label: __address__
+            replacement: $1:5000
+
+---
+# ============================================
+# RBAC for Prometheus to discover pods
+# ============================================
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-sa
+  namespace: greenops
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus-cr
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "endpoints"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus-cr
+subjects:
+- kind: ServiceAccount
+  name: prometheus-sa
+  namespace: greenops
+
+---
+# ============================================
+# Prometheus Deployment
+# ============================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: greenops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      serviceAccountName: prometheus-sa
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v2.48.0
+        args:
+          - '--config.file=/etc/prometheus/prometheus.yml'
+          - '--storage.tsdb.path=/prometheus'
+          - '--storage.tsdb.retention.time=2h'
+        ports:
+        - containerPort: 9090
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        volumeMounts:
+          - name: config
+            mountPath: /etc/prometheus
+          - name: data
+            mountPath: /prometheus
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-config
+        - name: data
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service
+  namespace: greenops
+spec:
+  type: NodePort
+  ports:
+    - port: 9090
+      targetPort: 9090
+      nodePort: 30900
+  selector:
+    app: prometheus

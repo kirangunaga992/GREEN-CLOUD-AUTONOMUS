@@ -1,0 +1,192 @@
+# ============================================
+# Grafana Data Source Auto-Config
+# ============================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: greenops
+data:
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus-service.greenops.svc.cluster.local:9090
+        isDefault: true
+        editable: true
+
+---
+# ============================================
+# Grafana Pre-built Dashboard
+# ============================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-config
+  namespace: greenops
+data:
+  dashboards.yaml: |
+    apiVersion: 1
+    providers:
+      - name: 'GreenOps'
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-greenops
+  namespace: greenops
+data:
+  greenops-dashboard.json: |
+    {
+      "title": "GreenOps Autonomous - Live Metrics",
+      "tags": ["greenops", "sustainability"],
+      "timezone": "browser",
+      "refresh": "5s",
+      "time": { "from": "now-15m", "to": "now" },
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "Active Users",
+          "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+          "targets": [{"expr": "greenops_active_users", "refId": "A"}],
+          "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"value": 0, "color": "blue"}, {"value": 1, "color": "green"}]}}}
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "Current Replicas",
+          "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4},
+          "targets": [{"expr": "greenops_current_replicas", "refId": "A"}],
+          "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"value": 0, "color": "red"}, {"value": 1, "color": "green"}]}}}
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "Energy Today (kWh)",
+          "gridPos": {"x": 12, "y": 0, "w": 6, "h": 4},
+          "targets": [{"expr": "greenops_energy_kwh_today", "refId": "A"}],
+          "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"value": 0, "color": "yellow"}]}, "decimals": 6}}
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "Carbon Saved (kg)",
+          "gridPos": {"x": 18, "y": 0, "w": 6, "h": 4},
+          "targets": [{"expr": "greenops_carbon_saved_kg_today", "refId": "A"}],
+          "fieldConfig": {"defaults": {"color": {"mode": "thresholds"}, "thresholds": {"steps": [{"value": 0, "color": "green"}]}, "decimals": 6}}
+        },
+        {
+          "id": 5,
+          "type": "timeseries",
+          "title": "Pod Replicas Over Time",
+          "gridPos": {"x": 0, "y": 4, "w": 12, "h": 8},
+          "targets": [{"expr": "greenops_current_replicas", "refId": "A", "legendFormat": "Replicas"}]
+        },
+        {
+          "id": 6,
+          "type": "timeseries",
+          "title": "Active Users Over Time",
+          "gridPos": {"x": 12, "y": 4, "w": 12, "h": 8},
+          "targets": [{"expr": "greenops_active_users", "refId": "A", "legendFormat": "Users"}]
+        },
+        {
+          "id": 7,
+          "type": "timeseries",
+          "title": "Workload Request Rate",
+          "gridPos": {"x": 0, "y": 12, "w": 12, "h": 8},
+          "targets": [{"expr": "rate(workload_requests_total[1m])", "refId": "A", "legendFormat": "{{endpoint}}"}]
+        },
+        {
+          "id": 8,
+          "type": "timeseries",
+          "title": "Gateway Active Users",
+          "gridPos": {"x": 12, "y": 12, "w": 12, "h": 8},
+          "targets": [{"expr": "gateway_active_users", "refId": "A", "legendFormat": "Active"}]
+        }
+      ]
+    }
+
+---
+# ============================================
+# Grafana Deployment
+# ============================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: greenops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: grafana/grafana:10.2.2
+        ports:
+        - containerPort: 3000
+        env:
+          - name: GF_SECURITY_ADMIN_USER
+            value: "admin"
+          - name: GF_SECURITY_ADMIN_PASSWORD
+            value: "admin"
+          - name: GF_AUTH_ANONYMOUS_ENABLED
+            value: "true"
+          - name: GF_AUTH_ANONYMOUS_ORG_ROLE
+            value: "Viewer"
+          - name: GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH
+            value: "/var/lib/grafana/dashboards/greenops-dashboard.json"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        volumeMounts:
+          - name: datasources
+            mountPath: /etc/grafana/provisioning/datasources
+          - name: dashboards-config
+            mountPath: /etc/grafana/provisioning/dashboards
+          - name: dashboards
+            mountPath: /var/lib/grafana/dashboards
+      volumes:
+        - name: datasources
+          configMap:
+            name: grafana-datasources
+        - name: dashboards-config
+          configMap:
+            name: grafana-dashboards-config
+        - name: dashboards
+          configMap:
+            name: grafana-dashboard-greenops
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-service
+  namespace: greenops
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30930
+  selector:
+    app: grafana

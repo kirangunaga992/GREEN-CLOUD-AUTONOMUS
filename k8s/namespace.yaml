@@ -1,0 +1,12 @@
+# ============================================
+# GreenOps Namespace
+# All resources will live inside this namespace
+# ============================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: greenops
+  labels:
+    name: greenops
+    project: greenops-autonomous
+    env: demo

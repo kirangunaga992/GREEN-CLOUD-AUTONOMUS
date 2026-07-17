@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenOps Cloud - Connect</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 480px;
+      width: 100%;
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 24px;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .logo { font-size: 64px; margin-bottom: 20px; }
+    h1 { color: #22c55e; font-size: 28px; margin-bottom: 8px; }
+    .tag { color: #94a3b8; font-size: 14px; margin-bottom: 30px; }
+    .status {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 4px solid #64748b;
+      transition: all 0.3s;
+    }
+    .status.active { border-left-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+    .status-label { font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .status-value { font-size: 20px; font-weight: bold; color: #fff; }
+    button {
+      width: 100%;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin: 8px 0;
+    }
+    .btn-connect { background: #22c55e; color: white; }
+    .btn-connect:hover { background: #16a34a; transform: translateY(-2px); }
+    .btn-disconnect { background: #ef4444; color: white; }
+    .btn-disconnect:hover { background: #dc2626; }
+    .btn-work { background: #3b82f6; color: white; margin-top: 12px; }
+    .btn-work:hover { background: #2563eb; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .stat {
+      background: rgba(15, 23, 42, 0.6);
+      padding: 16px;
+      border-radius: 12px;
+    }
+    .stat-num { font-size: 24px; font-weight: bold; color: #22c55e; }
+    .stat-lbl { font-size: 11px; color: #64748b; margin-top: 4px; }
+    .footer { margin-top: 30px; font-size: 12px; color: #475569; }
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .work-count { color: #3b82f6; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">🌿</div>
+    <h1>GreenOps Cloud</h1>
+    <p class="tag">AI-Driven Sustainable Cloud Access</p>
+
+    <div class="status" id="statusBox">
+      <div class="status-label">Connection Status</div>
+      <div class="status-value" id="statusText">⚫ Not Connected</div>
+    </div>
+
+    <div class="stats" id="statsBox" style="display: none;">
+      <div class="stat">
+        <div class="stat-num" id="requestCount">0</div>
+        <div class="stat-lbl">Your Requests</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="uptimeSec">0s</div>
+        <div class="stat-lbl">Connected</div>
+      </div>
+    </div>
+
+    <button class="btn-connect" id="connectBtn" onclick="connect()">
+      ▶ Connect to Cloud
+    </button>
+    <button class="btn-disconnect" id="disconnectBtn" onclick="disconnect()" disabled>
+      ⏹ Disconnect
+    </button>
+    <button class="btn-work" id="workBtn" onclick="doWork()" disabled>
+      ⚡ Send Work Request
+    </button>
+
+    <div class="footer">
+      <p>When you connect, the cloud wakes up 🌱</p>
+      <p>When you leave, it sleeps to save energy 💤</p>
+    </div>
+  </div>
+
+  <script>
+    // This URL will be replaced with Cloudflare tunnel URL
+    const GATEWAY_URL = window.location.origin;
+
+    let sessionId = null;
+    let heartbeatInterval = null;
+    let uptimeInterval = null;
+    let requestCount = 0;
+    let startTime = null;
+
+    async function connect() {
+      try {
+        const res = await fetch(`${GATEWAY_URL}/api/session/start`, { method: 'POST' });
+        const data = await res.json();
+        sessionId = data.session_id;
+        startTime = Date.now();
+
+        document.getElementById('statusBox').classList.add('active');
+        document.getElementById('statusText').innerHTML = '🟢 <span class="pulse">Connected to Green Cloud</span>';
+        document.getElementById('connectBtn').disabled = true;
+        document.getElementById('disconnectBtn').disabled = false;
+        document.getElementById('workBtn').disabled = false;
+        document.getElementById('statsBox').style.display = 'grid';
+
+        // Send heartbeat every 10s
+        heartbeatInterval = setInterval(() => {
+          fetch(`${GATEWAY_URL}/api/session/heartbeat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: sessionId })
+          }).catch(() => {});
+        }, 10000);
+
+        // Update uptime counter
+        uptimeInterval = setInterval(() => {
+          const secs = Math.floor((Date.now() - startTime) / 1000);
+          document.getElementById('uptimeSec').textContent = secs + 's';
+        }, 1000);
+
+      } catch (e) {
+        alert('Failed to connect: ' + e.message);
+      }
+    }
+
+    async function disconnect() {
+      if (!sessionId) return;
+      clearInterval(heartbeatInterval);
+      clearInterval(uptimeInterval);
+      try {
+        await fetch(`${GATEWAY_URL}/api/session/end`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_id: sessionId })
+        });
+      } catch {}
+
+      sessionId = null;
+      document.getElementById('statusBox').classList.remove('active');
+      document.getElementById('statusText').innerHTML = '⚫ Disconnected';
+      document.getElementById('connectBtn').disabled = false;
+      document.getElementById('disconnectBtn').disabled = true;
+      document.getElementById('workBtn').disabled = true;
+      document.getElementById('statsBox').style.display = 'none';
+      requestCount = 0;
+    }
+
+    async function doWork() {
+      if (!sessionId) return;
+      try {
+        const intensity = ['light', 'medium', 'heavy'][Math.floor(Math.random() * 3)];
+        await fetch(`${GATEWAY_URL}/work?session_id=${sessionId}&intensity=${intensity}`);
+        requestCount++;
+        document.getElementById('requestCount').textContent = requestCount;
+      } catch {}
+    }
+
+    // Auto disconnect on page close
+    window.addEventListener('beforeunload', () => {
+      if (sessionId) {
+        navigator.sendBeacon(`${GATEWAY_URL}/api/session/end`,
+          JSON.stringify({ session_id: sessionId })
+        );
+      }
+    });
+  </script>
+</body>
+</html>

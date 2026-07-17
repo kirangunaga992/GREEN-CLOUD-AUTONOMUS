@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenOps Cloud - Sustainable Cloud Computing Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+    body {
+      background: #0a0e1a;
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+
+    /* ============================================
+       LANDING PAGE
+       ============================================ */
+    .landing {
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 14, 26, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 100;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .nav-brand .logo-icon {
+      font-size: 28px;
+    }
+    .nav-brand span {
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .nav-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: white; }
+    .nav-cta {
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      color: white !important;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600 !important;
+    }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3); }
+
+    /* Hero */
+    .hero {
+      padding: 140px 40px 100px;
+      text-align: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 70%);
+      z-index: -1;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 13px;
+      color: #86efac;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: #22c55e;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    h1 {
+      font-size: 68px;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -2px;
+    }
+    h1 .highlight {
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-desc {
+      font-size: 20px;
+      color: #94a3b8;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+    .cta-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 60px;
+    }
+    .btn-primary-lg {
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      color: white;
+      padding: 16px 32px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+    }
+    .btn-primary-lg:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(34, 197, 94, 0.4);
+    }
+    .btn-secondary-lg {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      padding: 16px 32px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary-lg:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 32px;
+      font-weight: 800;
+      color: #22c55e;
+      margin-bottom: 4px;
+    }
+    .stat-lbl {
+      font-size: 13px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Features Section */
+    .section {
+      padding: 100px 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-title {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .section-title h2 {
+      font-size: 44px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+    .section-title p {
+      color: #94a3b8;
+      font-size: 18px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .feature-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 32px;
+      transition: all 0.3s;
+    }
+    .feature-card:hover {
+      border-color: rgba(34, 197, 94, 0.3);
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.2));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .feature-card h3 {
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .feature-card p {
+      color: #94a3b8;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .price-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 40px 32px;
+      text-align: center;
+    }
+    .price-card.featured {
+      border-color: rgba(34, 197, 94, 0.5);
+      background: rgba(34, 197, 94, 0.05);
+      transform: scale(1.05);
+      position: relative;
+    }
+    .price-tag {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .price-name {
+      color: #94a3b8;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .price-amount {
+      font-size: 48px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 8px;
+    }
+    .price-amount span {
+      font-size: 16px;
+      color: #64748b;
+      font-weight: 400;
+    }
+    .price-features {
+      list-style: none;
+      text-align: left;
+      margin: 32px 0;
+    }
+    .price-features li {
+      padding: 8px 0;
+      color: #cbd5e1;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .price-features li::before {
+      content: '✓';
+      color: #22c55e;
+      font-weight: bold;
+    }
+    .price-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .price-btn.primary {
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      color: white;
+    }
+    .price-btn.secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 60px 40px 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: center;
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-brand {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .footer-desc {
+      color: #64748b;
+      margin-bottom: 32px;
+    }
+    .footer-copyright {
+      color: #475569;
+      font-size: 13px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* ============================================
+       AUTH PAGES (Login/Signup)
+       ============================================ */
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+    }
+    .auth-left {
+      flex: 1;
+      background: linear-gradient(135deg, #052e16, #14532d);
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-left::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(34, 197, 94, 0.2) 0%, transparent 70%);
+    }
+    .auth-left-content {
+      position: relative;
+      z-index: 1;
+    }
+    .auth-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 24px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 48px;
+      cursor: pointer;
+    }
+    .auth-title {
+      font-size: 42px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+    .auth-subtitle {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 400px;
+    }
+    .auth-testimonial {
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      padding: 24px;
+      border-radius: 12px;
+      border-left: 3px solid #22c55e;
+      position: relative;
+      z-index: 1;
+    }
+    .testimonial-text {
+      color: white;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+    .testimonial-author {
+      color: #86efac;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .auth-right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: #0f172a;
+    }
+    .auth-form {
+      width: 100%;
+      max-width: 400px;
+    }
+    .auth-form h2 {
+      font-size: 30px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 8px;
+    }
+    .auth-form-desc {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #22c55e;
+      background: rgba(30, 41, 59, 0.8);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+    }
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+    .form-actions a {
+      color: #22c55e;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .form-actions a:hover { text-decoration: underline; }
+    .btn-auth {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #22c55e, #10b981);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: all 0.2s;
+    }
+    .btn-auth:hover { transform: translateY(-1px); box-shadow: 0 8px 16px rgba(34, 197, 94, 0.3); }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 24px 0;
+      color: #64748b;
+      font-size: 13px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .btn-google {
+      width: 100%;
+      padding: 12px;
+      background: white;
+      color: #1f2937;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    .btn-google:hover { background: #f3f4f6; }
+    .google-icon {
+      width: 18px;
+      height: 18px;
+    }
+    .switch-auth {
+      text-align: center;
+      margin-top: 24px;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .switch-auth a {
+      color: #22c55e;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .success {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #86efac;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    /* Modal for password reset */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 420px;
+      width: 90%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .modal h3 {
+      color: white;
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+    .modal p {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .hidden { display: none !important; }
+    .visible { display: block !important; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      h1 { font-size: 44px; }
+      .features-grid, .pricing-grid { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .auth-container { flex-direction: column; }
+      .auth-left { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================
+       LANDING PAGE
+       ============================================ -->
+  <div id="landing" class="landing">
+    <nav class="nav">
+      <div class="nav-brand">
+        <span class="logo-icon">🌿</span>
+        <span>GreenOps</span>
+      </div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#" onclick="showLogin(); return false;">Sign In</a>
+        <a href="#" class="nav-cta" onclick="showSignup(); return false;">Get Started</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Trusted by 500+ engineering teams worldwide
+      </div>
+      <h1>Cloud that <span class="highlight">saves the planet</span><br>and your budget</h1>
+      <p class="hero-desc">
+        GreenOps is the AI-powered cloud platform that automatically scales down when idle,
+        reducing your carbon footprint by 60% and cutting cloud costs by 40%.
+      </p>
+      <div class="cta-group">
+        <button class="btn-primary-lg" onclick="showSignup()">Start Free Trial →</button>
+        <button class="btn-secondary-lg" onclick="showLogin()">Sign In</button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-num">60%</div>
+          <div class="stat-lbl">Less Carbon</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">40%</div>
+          <div class="stat-lbl">Cost Saved</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">0ms</div>
+          <div class="stat-lbl">Cold Start</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">99.9%</div>
+          <div class="stat-lbl">Uptime</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="section-title">
+        <h2>Everything you need to go green</h2>
+        <p>Enterprise-grade infrastructure that automatically optimizes for sustainability</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>AI-Powered Scaling</h3>
+          <p>Prophet ML model predicts your traffic and pre-scales resources before demand arrives. No cold starts, ever.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌱</div>
+          <h3>Carbon Tracking</h3>
+          <p>Real-time CO2 emissions monitoring with detailed reports. Meet your sustainability goals with confidence.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💰</div>
+          <h3>Cost Optimization</h3>
+          <p>Pay only for what you use. Automatic scale-to-zero saves you money during idle periods.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Advanced Analytics</h3>
+          <p>Beautiful dashboards showing usage patterns, cost trends, and environmental impact metrics.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Enterprise Security</h3>
+          <p>SOC 2 compliant with end-to-end encryption, MFA, and role-based access control.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <h3>Multi-Cloud Ready</h3>
+          <p>Deploy across AWS, Azure, and GCP. Manage everything from one unified dashboard.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section">
+      <div class="section-title">
+        <h2>Simple, transparent pricing</h2>
+        <p>Start free, upgrade as you grow. No hidden fees.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <div class="price-name">Starter</div>
+          <div class="price-amount">₹0<span>/month</span></div>
+          <ul class="price-features">
+            <li>Up to 5 users</li>
+            <li>1 GB storage</li>
+            <li>Basic monitoring</li>
+            <li>Community support</li>
+          </ul>
+          <button class="price-btn secondary" onclick="showSignup()">Start Free</button>
+        </div>
+        <div class="price-card featured">
+          <div class="price-tag">MOST POPULAR</div>
+          <div class="price-name">Professional</div>
+          <div class="price-amount">₹999<span>/month</span></div>
+          <ul class="price-features">
+            <li>Unlimited users</li>
+            <li>100 GB storage</li>
+            <li>Advanced analytics</li>
+            <li>AI chatbot assistant</li>
+            <li>Priority support</li>
+            <li>Custom integrations</li>
+          </ul>
+          <button class="price-btn primary" onclick="showSignup()">Start 14-Day Trial</button>
+        </div>
+        <div class="price-card">
+          <div class="price-name">Enterprise</div>
+          <div class="price-amount">Custom</div>
+          <ul class="price-features">
+            <li>Unlimited everything</li>
+            <li>Dedicated infrastructure</li>
+            <li>24/7 phone support</li>
+            <li>Custom SLA</li>
+            <li>On-premise option</li>
+          </ul>
+          <button class="price-btn secondary" onclick="showSignup()">Contact Sales</button>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-brand">🌿 GreenOps</div>
+        <p class="footer-desc">Sustainable cloud infrastructure for the modern enterprise</p>
+        <p class="footer-copyright">© 2025 GreenOps Cloud Platform · Made with 💚 for a greener planet</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ============================================
+       LOGIN PAGE
+       ============================================ -->
+  <div id="loginPage" class="auth-container hidden">
+    <div class="auth-left">
+      <div class="auth-left-content">
+        <div class="auth-brand" onclick="showLanding()">
+          <span>🌿</span> GreenOps
+        </div>
+        <h1 class="auth-title">Welcome back!</h1>
+        <p class="auth-subtitle">
+          Sign in to access your sustainable cloud platform and start saving money and carbon today.
+        </p>
+      </div>
+      <div class="auth-testimonial">
+        <p class="testimonial-text">"GreenOps cut our AWS bill by 42% and helped us hit our sustainability goals 6 months early. Game changer!"</p>
+        <p class="testimonial-author">— Priya Sharma, CTO at TechStartup</p>
+      </div>
+    </div>
+
+    <div class="auth-right">
+      <div class="auth-form">
+        <h2>Sign in to your account</h2>
+        <p class="auth-form-desc">Enter your credentials to access your dashboard</p>
+
+        <div class="error" id="loginError"></div>
+
+        <button class="btn-google" onclick="fakeGoogleLogin()">
+          <svg class="google-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="divider">or sign in with email</div>
+
+        <div class="form-group">
+          <label class="form-label">Email address</label>
+          <input type="email" id="loginEmail" class="form-input" placeholder="you@company.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" />
+        </div>
+        <div class="form-actions">
+          <label style="color:#94a3b8; display:flex; gap:6px; align-items:center; cursor:pointer;">
+            <input type="checkbox" /> Remember me
+          </label>
+          <a onclick="showForgotPassword()">Forgot password?</a>
+        </div>
+
+        <button class="btn-auth" onclick="handleLogin()">Sign In →</button>
+
+        <div class="switch-auth">
+          Don't have an account? <a onclick="showSignup()">Sign up for free</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       SIGNUP PAGE
+       ============================================ -->
+  <div id="signupPage" class="auth-container hidden">
+    <div class="auth-left">
+      <div class="auth-left-content">
+        <div class="auth-brand" onclick="showLanding()">
+          <span>🌿</span> GreenOps
+        </div>
+        <h1 class="auth-title">Start saving in<br>2 minutes</h1>
+        <p class="auth-subtitle">
+          Join thousands of teams reducing their cloud costs and carbon footprint. No credit card required.
+        </p>
+      </div>
+      <div class="auth-testimonial">
+        <p class="testimonial-text">"The onboarding was incredible. We were up and running in 5 minutes and already saving money on day one."</p>
+        <p class="testimonial-author">— Rahul Kumar, DevOps Lead</p>
+      </div>
+    </div>
+
+    <div class="auth-right">
+      <div class="auth-form">
+        <h2>Create your account</h2>
+        <p class="auth-form-desc">Get started with free tier - no credit card needed</p>
+
+        <div class="error" id="signupError"></div>
+        <div class="success" id="signupSuccess"></div>
+
+        <button class="btn-google" onclick="fakeGoogleLogin()">
+          <svg class="google-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="divider">or sign up with email</div>
+
+        <div class="form-group">
+          <label class="form-label">Full name</label>
+          <input type="text" id="signupName" class="form-input" placeholder="John Doe" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Work email</label>
+          <input type="email" id="signupEmail" class="form-input" placeholder="you@company.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="signupPassword" class="form-input" placeholder="Min. 4 characters" />
+        </div>
+
+        <button class="btn-auth" onclick="handleSignup()">Create Account →</button>
+
+        <div class="switch-auth">
+          Already have an account? <a onclick="showLogin()">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal-backdrop" id="forgotModal">
+    <div class="modal">
+      <h3>🔑 Reset Password</h3>
+      <p>Enter your email and we'll send you a reset link.</p>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="forgotEmail" class="form-input" placeholder="you@company.com" />
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="btn-secondary-lg" style="flex:1; padding: 12px;" onclick="closeForgotModal()">Cancel</button>
+        <button class="btn-auth" style="flex:1; margin: 0;" onclick="handleForgotPassword()">Send Reset Link</button>
+      </div>
+
+      <div id="forgotSuccess" style="display:none; margin-top: 20px; padding: 16px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; color: #86efac; font-size: 13px;">
+        <p style="font-weight: 600; margin-bottom: 8px;">📧 Reset link sent!</p>
+        <p style="margin-bottom: 8px;">Since this is a demo, here's your temporary password:</p>
+        <p style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px; word-break: break-all; margin-bottom: 8px;" id="tempPassword">-</p>
+        <p style="font-size: 12px; opacity: 0.8;">Use this to sign in and change your password later.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    let currentToken = localStorage.getItem('greenops_token');
+
+    // Init - check if user is already logged in
+    async function init() {
+      if (currentToken) {
+        try {
+          const res = await fetch(`${API_BASE}/api/me`, {
+            headers: { 'Authorization': `Bearer ${currentToken}` }
+          });
+          if (res.ok) {
+            // User logged in - redirect to dashboard
+            window.location.href = '/dashboard';
+            return;
+          }
+        } catch {}
+        localStorage.removeItem('greenops_token');
+        currentToken = null;
+      }
+      showLanding();
+    }
+
+    function showLanding() {
+      document.getElementById('landing').classList.remove('hidden');
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('signupPage').classList.add('hidden');
+      window.scrollTo(0, 0);
+    }
+
+    function showLogin() {
+      document.getElementById('landing').classList.add('hidden');
+      document.getElementById('loginPage').classList.remove('hidden');
+      document.getElementById('signupPage').classList.add('hidden');
+      window.scrollTo(0, 0);
+    }
+
+    function showSignup() {
+      document.getElementById('landing').classList.add('hidden');
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('signupPage').classList.remove('hidden');
+      window.scrollTo(0, 0);
+    }
+
+    async function handleLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      if (!email || !password) {
+        showError('loginError', 'Please enter email and password');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError('loginError', data.detail || 'Invalid credentials');
+          return;
+        }
+
+        localStorage.setItem('greenops_token', data.token);
+        localStorage.setItem('greenops_user', JSON.stringify(data.user));
+        window.location.href = '/dashboard';
+
+      } catch (e) {
+        showError('loginError', 'Cannot connect to server');
+      }
+    }
+
+    async function handleSignup() {
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+
+      if (!name || !email || !password) {
+        showError('signupError', 'All fields required');
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError('signupError', data.detail || 'Signup failed');
+          return;
+        }
+
+        showSuccess('signupSuccess', 'Account created! Redirecting to login...');
+        setTimeout(() => {
+          showLogin();
+          document.getElementById('loginEmail').value = email;
+        }, 1500);
+
+      } catch (e) {
+        showError('signupError', 'Cannot connect to server');
+      }
+    }
+
+    function fakeGoogleLogin() {
+      alert('🚧 Google OAuth integration coming soon!\n\nFor now, please use email/password signup.');
+    }
+
+    function showForgotPassword() {
+      document.getElementById('forgotModal').classList.add('show');
+    }
+
+    function closeForgotModal() {
+      document.getElementById('forgotModal').classList.remove('show');
+      document.getElementById('forgotSuccess').style.display = 'none';
+      document.getElementById('forgotEmail').value = '';
+    }
+
+    function handleForgotPassword() {
+      const email = document.getElementById('forgotEmail').value.trim();
+      if (!email) { alert('Please enter email'); return; }
+
+      // Generate a fake reset token
+      const tempPassword = 'reset_' + Math.random().toString(36).substr(2, 8);
+      document.getElementById('tempPassword').textContent = tempPassword;
+      document.getElementById('forgotSuccess').style.display = 'block';
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 5000);
+    }
+
+    function showSuccess(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    init();
+  </script>
+</body>
+</html>

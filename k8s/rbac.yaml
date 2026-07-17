@@ -1,0 +1,61 @@
+# ============================================
+# Service Account for GreenOps Backend
+# ============================================
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: greenops-controller
+  namespace: greenops
+
+---
+# ============================================
+# Role - What permissions does the backend have?
+# ============================================
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: greenops-scaler
+  namespace: greenops
+rules:
+# Read pods
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+
+# Read services
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get", "list", "watch"]
+
+# READ + SCALE deployments (the main power!)
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch", "update", "patch"]
+
+# Scale subresource specifically
+- apiGroups: ["apps"]
+  resources: ["deployments/scale"]
+  verbs: ["get", "update", "patch"]
+
+# Read deployment status
+- apiGroups: ["apps"]
+  resources: ["deployments/status"]
+  verbs: ["get"]
+
+---
+# ============================================
+# RoleBinding - Link Role to ServiceAccount
+# ============================================
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: greenops-scaler-binding
+  namespace: greenops
+subjects:
+- kind: ServiceAccount
+  name: greenops-controller
+  namespace: greenops
+roleRef:
+  kind: Role
+  name: greenops-scaler
+  apiGroup: rbac.authorization.k8s.io
