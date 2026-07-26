@@ -7,11 +7,13 @@ import time
 import logging
 import threading
 import requests
+from flask_sock import Sock
 from flask import Flask, jsonify, request, Response, send_from_directory
 from prometheus_client import Counter, Gauge, Histogram, generate_latest, CONTENT_TYPE_LATEST
 import session_manager
 
 app = Flask(__name__)
+sock = Sock(app)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -230,3 +232,136 @@ if __name__ == "__main__":
     logger.info(f"Backend:  {BACKEND_URL}")
     logger.info("=" * 50)
     app.run(host="0.0.0.0", port=GATEWAY_PORT, debug=False)
+
+
+# ============================================
+# WebSocket Presence Proxy
+# Forwards presence to backend
+# ============================================
+_active_presence = {}
+_presence_lock = threading.Lock()
+
+def _mark_presence(user_id, online):
+    """Notify backend of user presence."""
+    try:
+        requests.post(
+            f"{BACKEND_URL}/api/users/set-online",
+            json={"user_id": user_id, "is_online": online},
+            timeout=2
+        )
+    except Exception as e:
+        logger.error(f"Presence forward error: {e}")
+
+@sock.route("/ws/presence/<user_id>")
+def presence_ws(ws, user_id):
+    """WebSocket endpoint for user presence tracking."""
+    logger.info(f"🟢 Presence WS connected: {user_id}")
+    
+    with _presence_lock:
+        _active_presence[user_id] = _active_presence.get(user_id, 0) + 1
+    
+    _mark_presence(user_id, True)
+    
+    try:
+        while True:
+            # Wait for messages or timeout for ping
+            try:
+                msg = ws.receive(timeout=25)
+                if msg is None:
+                    # Send ping to keep alive
+                    ws.send("ping")
+            except Exception:
+                break
+    except Exception as e:
+        logger.debug(f"Presence WS error for {user_id}: {e}")
+    finally:
+        with _presence_lock:
+            _active_presence[user_id] = max(0, _active_presence.get(user_id, 1) - 1)
+            still_connected = _active_presence.get(user_id, 0)
+        
+        if still_connected == 0:
+            _mark_presence(user_id, False)
+            logger.info(f"⚪ Presence WS closed: {user_id} (OFFLINE)")
+        else:
+            logger.info(f"⚪ Presence WS closed: {user_id} (still {still_connected} tabs)")
+
+
+# ============================================
+# Services API Proxy
+# ============================================
+@app.route("/api/proxy/services/catalog", methods=["GET"])
+def proxy_services_catalog():
+    try:
+        r = requests.get(f"{BACKEND_URL}/api/services/catalog", timeout=5)
+        return jsonify(r.json()), r.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/proxy/services/active", methods=["GET"])
+def proxy_services_active():
+    try:
+        r = requests.get(f"{BACKEND_URL}/api/services/active", timeout=5)
+        return jsonify(r.json()), r.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/proxy/services/user/<user_id>", methods=["GET"])
+def proxy_services_user(user_id):
+    try:
+        r = requests.get(f"{BACKEND_URL}/api/services/user/{user_id}", timeout=5)
+        return jsonify(r.json()), r.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/proxy/services/toggle", methods=["POST"])
+def proxy_services_toggle():
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+        r = requests.post(f"{BACKEND_URL}/api/services/toggle", json=data, timeout=5)
+        return jsonify(r.json()), r.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/services")
+def portal_services():
+    """User services selection page."""
+    from flask import send_from_directory
+    return send_from_directory("static", "services.html")
+
+
+@app.route("/api/proxy/services/request", methods=["POST"])
+def proxy_services_request():
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+        r = requests.post(f"{BACKEND_URL}/api/services/request", json=data, timeout=5)
+        return jsonify(r.json()), r.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/proxy/services/stats", methods=["GET"])
+def proxy_services_stats():
+    try:
+        r = requests.get(f"{BACKEND_URL}/api/services/stats", timeout=5)
+        return jsonify(r.json()), r.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/proxy/services/failures", methods=["GET"])
+def proxy_services_failures():
+    try:
+        r = requests.get(f"{BACKEND_URL}/api/services/failures/recent", timeout=5)
+        return jsonify(r.json()), r.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/static/greenops-theme.css")
+def serve_theme_css():
+    from flask import send_from_directory
+    return send_from_directory("static", "greenops-theme.css", mimetype="text/css")
+
+@app.route("/static/<path:filename>")
+def serve_static(filename):
+    from flask import send_from_directory
+    return send_from_directory("static", filename)
+

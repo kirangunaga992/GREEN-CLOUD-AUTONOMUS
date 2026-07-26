@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-bgPrimary text-gray-200 font-sans;
+}
+
+.panel {
+  @apply bg-panel border border-borderSubtle rounded-md p-4 shadow-md;
+}
+
+.panel-title {
+  @apply text-sm text-gray-400 mb-2 tracking-wide uppercase;
+}
+
+.kpi-card {
+  @apply bg-panel border border-borderSubtle p-4 rounded-md;
+}
+
+/* Custom Grafana-style scrollbar */
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+  background: #0B0F14;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #1F2933;
+  border-radius: 3px;
+}
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: #3B82F6;
+}
+
+/* Toast slide-in animation */
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}

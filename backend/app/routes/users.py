@@ -172,3 +172,43 @@ async def get_user_detail(user_id: str):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return {"success": True, "user": user}
+
+
+# ============================================
+from fastapi import Body
+from datetime import datetime, timezone, timedelta
+
+
+# ============================================
+from datetime import datetime as _dt, timezone as _tz
+from fastapi import Body as _Body
+from app import database as _db_module
+
+
+# ============================================
+# Presence Update (called by gateway)
+# ============================================
+from datetime import datetime as _pr_dt, timezone as _pr_tz
+from fastapi import Body as _pr_Body
+from app import database as _pr_db
+
+@router.post("/set-online")
+async def set_online(payload: dict = _pr_Body(...)):
+    """Called by gateway WebSocket handler."""
+    try:
+        user_id = payload.get("user_id")
+        is_online = bool(payload.get("is_online", False))
+        if not user_id:
+            return {"success": False, "error": "user_id required"}
+        
+        _pr_db.get_db()["users"].update_one(
+            {"user_id": user_id},
+            {"$set": {
+                "is_online": is_online,
+                "last_seen": _pr_dt.now(_pr_tz.utc)
+            }}
+        )
+        return {"success": True, "user_id": user_id, "is_online": is_online}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+

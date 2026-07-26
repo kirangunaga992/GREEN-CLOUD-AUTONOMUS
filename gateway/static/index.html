@@ -645,7 +645,8 @@
       .auth-left { display: none; }
     }
   </style>
-</head>
+    <link rel="stylesheet" href="/static/greenops-theme.css">
+  </head>
 <body>
 
   <!-- ============================================
@@ -1092,5 +1093,84 @@
 
     init();
   </script>
+
+
+
+
+<script>
+// GreenOps Presence v4 — Works on localhost, LAN, and Cloudflare tunnel
+(function() {
+  let ws = null;
+  let reconnectTimer = null;
+
+  function getUserId() {
+    try {
+      const raw = localStorage.getItem("greenops_user");
+      if (!raw) return null;
+      const u = JSON.parse(raw);
+      return u.user_id || u.id || null;
+    } catch { return null; }
+  }
+
+  function connect() {
+    const uid = getUserId();
+    if (!uid) {
+      reconnectTimer = setTimeout(connect, 3000);
+      return;
+    }
+
+    // Use SAME host as current page (works on any domain/tunnel)
+    const wsProto = window.location.protocol === "https:" ? "wss" : "ws";
+    const wsUrl = `${wsProto}://${window.location.host}/ws/presence/${uid}`;
+
+    try {
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        console.log("🟢 Presence connected:", wsUrl);
+      };
+
+      ws.onmessage = (e) => {
+        if (e.data === "ping") {
+          try { ws.send("pong"); } catch {}
+        }
+      };
+
+      ws.onclose = () => {
+        console.log("⚪ Presence disconnected");
+        ws = null;
+        reconnectTimer = setTimeout(connect, 3000);
+      };
+
+      ws.onerror = (e) => {
+        console.warn("Presence error", e);
+        try { ws.close(); } catch {}
+      };
+    } catch (e) {
+      console.error("Presence connect failed:", e);
+      reconnectTimer = setTimeout(connect, 3000);
+    }
+  }
+
+  connect();
+
+  window.addEventListener("storage", (e) => {
+    if (e.key === "greenops_user") {
+      if (ws) { try { ws.close(); } catch {} }
+      connect();
+    }
+  });
+
+  window.addEventListener("pagehide", () => {
+    if (ws) try { ws.close(); } catch {}
+  });
+
+  console.log("✅ GreenOps Presence v4 active");
+})();
+</script>
+
 </body>
 </html>
+
+
+

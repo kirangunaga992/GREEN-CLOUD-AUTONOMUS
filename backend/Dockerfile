@@ -11,6 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 # Install system dependencies for Prophet
 RUN apt-get update && apt-get install -y \
+    docker.io \
     gcc \
     g++ \
     python3-dev \

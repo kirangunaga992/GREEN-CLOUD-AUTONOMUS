@@ -28,6 +28,10 @@ from app.routes import (
     session,
     sustainability,
     users,
+    websocket,
+    presence,
+    cluster,
+    services,
 )
 
 # ============================================
@@ -144,6 +148,9 @@ async def run_autoscaler_job():
     except Exception as e:
         logger.error(f"Autoscaler job error: {e}")
 
+
+
+
 # ============================================
 # Lifespan
 # ============================================
@@ -202,6 +209,10 @@ app.include_router(prediction.router, prefix="/api/prediction", tags=["Predictio
 app.include_router(session.router, prefix="/api/session", tags=["Session"])
 app.include_router(sustainability.router, prefix="/api/sustainability", tags=["Sustainability"])
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
+app.include_router(websocket.router, tags=["WebSocket"])
+app.include_router(presence.router, tags=["Presence"])
+app.include_router(cluster.router, prefix="/api/cluster", tags=["Cluster"])
+app.include_router(services.router, prefix="/api/services", tags=["Services"])
 
 # ============================================
 # Basic Endpoints
