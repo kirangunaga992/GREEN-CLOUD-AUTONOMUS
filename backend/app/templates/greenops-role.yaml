@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'GreenOps Autonomous - Read-Only IAM Role for Cloud Monitoring & Sustainability'
+
+Parameters:
+  GreenOpsAccountId:
+    Type: String
+    Default: '736461510325'
+    Description: 'GreenOps AWS Account ID (do not modify)'
+    AllowedPattern: '^[0-9]{12}$'
+  
+  ExternalId:
+    Type: String
+    Description: 'Unique security ID from your GreenOps dashboard (copy from dashboard)'
+    MinLength: 10
+    NoEcho: false
+
+Resources:
+  GreenOpsReadOnlyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: GreenOpsReadOnlyRole
+      Description: 'Read-only access for GreenOps sustainable cloud monitoring'
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${GreenOpsAccountId}:root'
+            Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                'sts:ExternalId': !Ref ExternalId
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/ReadOnlyAccess'
+      Tags:
+        - Key: 'Purpose'
+          Value: 'GreenOps Monitoring'
+        - Key: 'ManagedBy'
+          Value: 'CloudFormation'
+        - Key: 'Product'
+          Value: 'GreenOps Autonomous'
+
+Outputs:
+  RoleArn:
+    Description: '👉 COPY THIS ARN AND PASTE IN YOUR GREENOPS DASHBOARD'
+    Value: !GetAtt GreenOpsReadOnlyRole.Arn
+    Export:
+      Name: GreenOpsRoleArn
+  
+  ExternalId:
+    Description: 'Your security identifier (already saved in GreenOps)'
+    Value: !Ref ExternalId
+  
+  AccountId:
+    Description: 'Your AWS Account ID'
+    Value: !Ref AWS::AccountId
+  
+  Region:
+    Description: 'Region where role was created'
+    Value: !Ref AWS::Region
