@@ -1,67 +1,55 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-.Python
-venv/
-env/
-.venv/
-*.egg-info/
-dist/
-build/
-
-# Node
-node_modules/
-.vite/
-dist/
-build/
-.DS_Store
-*.log
-npm-debug.log*
-yarn-debug.log*
-
-# Environment files (SECRET!)
+# Environment files (contains secrets!)
 .env
 .env.local
 .env.production
+*.env
+
+# AWS credentials
+credentials
+config
+
+# Docker
+docker-compose.override.yml
+
+# Node modules
+node_modules/
+npm-debug.log*
+
+# Build outputs
+dist/
+build/
+*.pyc
+__pycache__/
+*.egg-info/
 
 # IDE
 .vscode/
 .idea/
 *.swp
-*.swo
-*~
-
-# OS
 .DS_Store
-Thumbs.db
-
-# Docker
-docker-data/
-
-# MongoDB data
-data/
-mongo_data/
-
-# Cloudflare
-cloudflared*
-!cloudflared.md
-
-# Backup files
-*.bak
-*.broken
-*.backup
-dashboard.broken.html
 
 # Logs
-logs/
 *.log
+logs/
 
-# Testing
-.pytest_cache/
+# Database
+*.db
+*.sqlite
+
+# Test coverage
 .coverage
 htmlcov/
+.pytest_cache/
 
-# Minikube
-.minikube/
+# Backup files
+*.backup
+*.bak
+*.old
+docker-compose.yml.bak
+docker-compose.yml.local
+
+# Secrets - NEVER COMMIT
+**/secrets/
+**/*_secret*
+**/*_key*
+!**/*_public_key*
