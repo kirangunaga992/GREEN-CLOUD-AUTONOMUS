@@ -806,6 +806,87 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('🌿 GreenOps Universal Button Handler Active');
+
+  // Helper to open/show modal or auth section
+  function showLogin() {
+    var modal = document.getElementById('loginModal') || document.getElementById('authModal') || document.querySelector('.modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.classList.add('active', 'show');
+    }
+    var loginSection = document.getElementById('loginSection') || document.querySelector('.login-section');
+    if (loginSection) loginSection.style.display = 'block';
+    
+    // If no modal/section exists, redirect to login page or prompt
+    var emailInput = document.querySelector('input[type=email]');
+    if (emailInput) {
+      emailInput.focus();
+      emailInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function showSignup() {
+    var modal = document.getElementById('signupModal') || document.getElementById('authModal') || document.querySelector('.modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.classList.add('active', 'show');
+    }
+    var emailInput = document.querySelector('input[type=email]');
+    if (emailInput) {
+      emailInput.focus();
+      emailInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  // Attach click listeners to ALL buttons & links by text
+  document.querySelectorAll('a, button, .btn').forEach(function(el) {
+    var text = (el.innerText || el.textContent || '').trim().toLowerCase();
+    
+    if (text.includes('sign in') || text.includes('login') || text.includes('sign-in')) {
+      el.onclick = function(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        showLogin();
+        return false;
+      };
+    } else if (text.includes('start free trial') || text.includes('get started') || text.includes('sign up')) {
+      el.onclick = function(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        showSignup();
+        return false;
+      };
+    } else if (text.includes('features')) {
+      el.onclick = function(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        var sec = document.getElementById('features') || document.querySelector('.features');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+        return false;
+      };
+    } else if (text.includes('pricing')) {
+      el.onclick = function(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        var sec = document.getElementById('pricing') || document.querySelector('.pricing');
+        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+        return false;
+      };
+    }
+  });
+
+  // Modal close buttons
+  document.querySelectorAll('.close, .close-btn, .modal-close').forEach(function(el) {
+    el.onclick = function() {
+      document.querySelectorAll('.modal').forEach(function(m) {
+        m.style.display = 'none';
+        m.classList.remove('active', 'show');
+      });
+    };
+  });
+});
+</script>
+
 </head>
 <body>
 
