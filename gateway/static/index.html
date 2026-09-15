@@ -4,121 +4,149 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GreenOps Cloud - Sustainable Cloud Platform</title>
-<link rel="stylesheet" href="/static/greenops-theme.css">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
-  body { background: #0B0F14; color: #E2E8F0; min-height: 100vh; }
-  
-  .nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid #1F2933; background: #11161D; }
-  .brand { display: flex; items-center; gap: 10px; font-size: 20px; font-weight: bold; color: #22C55E; text-decoration: none; }
-  .nav-links { display: flex; gap: 24px; align-items: center; }
-  .nav-links a { color: #94A3B8; text-decoration: none; font-size: 14px; font-weight: 500; cursor: pointer; }
+  body { background: #080C10; color: #E2E8F0; min-height: 100vh; overflow-x: hidden; }
+
+  /* Navbar */
+  .nav { display: flex; justify-content: space-between; align-items: center; padding: 24px 60px; background: #080C10; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .brand { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 700; color: #FFF; text-decoration: none; }
+  .brand-icon { color: #22C55E; }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a { color: #94A3B8; text-decoration: none; font-size: 14px; font-weight: 500; cursor: pointer; transition: color 0.2s; }
   .nav-links a:hover { color: #FFF; }
-  .btn-green { background: #22C55E; color: #0B0F14; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; text-decoration: none; }
-  .btn-green:hover { background: #16A34A; }
-  .btn-subtle { background: #171C23; color: #FFF; border: 1px solid #1F2933; padding: 10px 20px; border-radius: 6px; font-weight: 500; font-size: 14px; cursor: pointer; }
-  .btn-subtle:hover { border-color: #3B82F6; }
+  .btn-get-started { background: #22C55E; color: #0B0F14; border: none; padding: 10px 22px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; text-decoration: none; transition: background 0.2s; }
+  .btn-get-started:hover { background: #16A34A; }
 
-  .hero { text-align: center; padding: 80px 20px 40px; max-width: 900px; margin: 0 auto; }
-  .badge { display: inline-block; background: rgba(34,197,94,0.15); color: #22C55E; border: 1px solid rgba(34,197,94,0.3); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 24px; }
-  .hero h1 { font-size: 52px; font-weight: 800; color: #FFF; line-height: 1.1; margin-bottom: 20px; }
-  .hero h1 span { color: #22C55E; }
-  .hero p { font-size: 18px; color: #94A3B8; line-height: 1.6; margin-bottom: 36px; max-width: 700px; margin-left: auto; margin-right: auto; }
-  .cta-group { display: flex; gap: 16px; justify-content: center; margin-bottom: 60px; }
+  /* Hero Section */
+  .hero { text-align: center; padding: 100px 20px 60px; max-width: 950px; margin: 0 auto; }
+  .trust-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(34,197,94,0.08); color: #22C55E; border: 1px solid rgba(34,197,94,0.2); padding: 6px 16px; border-radius: 30px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 32px; }
+  .trust-dot { width: 6px; height: 6px; border-radius: 50%; background: #22C55E; display: inline-block; }
+  
+  .hero h1 { font-size: 64px; font-weight: 800; color: #FFF; line-height: 1.1; margin-bottom: 24px; letter-spacing: -1px; }
+  .hero h1 .highlight { color: #22C55E; }
+  .hero p { font-size: 18px; color: #94A3B8; line-height: 1.6; margin-bottom: 40px; max-width: 720px; margin-left: auto; margin-right: auto; }
+  
+  .cta-group { display: flex; gap: 16px; justify-content: center; margin-bottom: 80px; }
+  .btn-trial { background: #22C55E; color: #0B0F14; border: none; padding: 16px 32px; border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; transition: all 0.2s; box-shadow: 0 0 25px rgba(34,197,94,0.3); }
+  .btn-trial:hover { background: #16A34A; transform: translateY(-1px); }
+  .btn-signin { background: #11161D; color: #FFF; border: 1px solid #1F2933; padding: 16px 32px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; transition: all 0.2s; }
+  .btn-signin:hover { border-color: #3B82F6; background: #171C23; }
 
-  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 900px; margin: 0 auto 60px; padding: 24px; background: #11161D; border: 1px solid #1F2933; border-radius: 12px; text-align: center; }
-  .stat-num { font-size: 32px; font-weight: 800; color: #22C55E; }
-  .stat-desc { font-size: 11px; color: #64748B; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  /* Stats Row */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; max-width: 900px; margin: 0 auto 100px; }
+  .stat-card { background: #0D1218; border: 1px solid #161F28; border-radius: 12px; padding: 32px 20px; text-align: center; }
+  .stat-val { font-size: 38px; font-weight: 800; color: #22C55E; margin-bottom: 4px; }
+  .stat-lbl { font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px; }
 
-  /* Auth Modal */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; p: 20px; }
+  /* Section Header */
+  .section-header { text-align: center; max-width: 700px; margin: 0 auto 50px; }
+  .section-header h2 { font-size: 28px; font-weight: 700; color: #FFF; margin-bottom: 12px; }
+  .section-header p { font-size: 15px; color: #94A3B8; }
+
+  /* Testimonial Card */
+  .testimonial { max-width: 800px; margin: 40px auto 80px; background: rgba(34,197,94,0.03); border: 1px solid rgba(34,197,94,0.15); border-radius: 12px; padding: 24px 32px; text-align: left; }
+  .quote { color: #E2E8F0; font-size: 15px; font-style: italic; margin-bottom: 12px; }
+  .author { color: #22C55E; font-size: 13px; font-weight: 600; }
+
+  /* Auth Modal Overlay */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.active { display: flex; }
-  .auth-card { background: #11161D; border: 1px solid #1F2933; border-radius: 12px; width: 100%; max-width: 420px; padding: 32px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-  .close-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #64748B; font-size: 20px; cursor: pointer; }
+  .auth-card { background: #11161D; border: 1px solid #1F2933; border-radius: 12px; width: 100%; max-width: 420px; padding: 36px; position: relative; box-shadow: 0 25px 60px rgba(0,0,0,0.6); }
+  .close-btn { position: absolute; top: 16px; right: 20px; background: none; border: none; color: #64748B; font-size: 22px; cursor: pointer; }
   .close-btn:hover { color: #FFF; }
 
-  .form-group { margin-bottom: 16px; text-align: left; }
-  .form-group label { display: block; font-size: 11px; text-transform: uppercase; color: #94A3B8; margin-bottom: 6px; font-weight: 600; }
-  .form-group input { width: 100%; background: #0B0F14; border: 1px solid #1F2933; color: #FFF; padding: 12px; border-radius: 6px; font-size: 14px; outline: none; }
-  .form-group input:focus { border-color: #3B82F6; }
-
-  .section { max-width: 1000px; margin: 0 auto; padding: 60px 20px; border-top: 1px solid #1F2933; text-align: center; }
-  .section h2 { font-size: 28px; color: #FFF; margin-bottom: 12px; }
-  .section p { color: #94A3B8; font-size: 15px; margin-bottom: 40px; }
+  .form-group { margin-bottom: 18px; text-align: left; }
+  .form-group label { display: block; font-size: 11px; text-transform: uppercase; color: #94A3B8; margin-bottom: 8px; font-weight: 700; letter-spacing: 0.5px; }
+  .form-group input { width: 100%; background: #0B0F14; border: 1px solid #1F2933; color: #FFF; padding: 12px 14px; border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+  .form-group input:focus { border-color: #22C55E; }
 </style>
 </head>
 <body>
 
   <!-- Navigation -->
   <nav class="nav">
-    <a href="/" class="brand">🌿 GreenOps</a>
+    <a href="/" class="brand"><span class="brand-icon">🌿</span> GreenOps</a>
     <div class="nav-links">
-      <a onclick="scrollToSection('features')">Features</a>
-      <a onclick="scrollToSection('pricing')">Pricing</a>
-      <a onclick="openAuthModal('login')">Sign In</a>
-      <button class="btn-green" onclick="openAuthModal('signup')">Get Started</button>
+      <a onclick="scrollToSec('features')">Features</a>
+      <a onclick="scrollToSec('pricing')">Pricing</a>
+      <a onclick="openAuth('login')">Sign In</a>
+      <button class="btn-get-started" onclick="openAuth('signup')">Get Started</button>
     </div>
   </nav>
 
   <!-- Hero -->
   <section class="hero">
-    <span class="badge">● Trusted by 500+ engineering teams</span>
-    <h1>Cloud that <span>saves the planet</span><br>and your budget</h1>
-    <p>GreenOps is the AI-powered cloud platform that automatically scales down when idle, reducing your carbon footprint by up to 99% and cutting costs.</p>
+    <div class="trust-badge">
+      <span class="trust-dot"></span> TRUSTED BY 500+ ENGINEERING TEAMS WORLDWIDE
+    </div>
+    
+    <h1>Cloud that <span class="highlight">saves the planet</span><br>and your budget</h1>
+    
+    <p>GreenOps is the AI-powered cloud platform that automatically scales down when idle, reducing your carbon footprint by 60% and cutting cloud costs by 40%.</p>
+    
     <div class="cta-group">
-      <button class="btn-green" onclick="openAuthModal('signup')" style="padding: 14px 28px; font-size: 16px;">Start Free Trial →</button>
-      <button class="btn-subtle" onclick="openAuthModal('login')" style="padding: 14px 28px; font-size: 16px;">Sign In</button>
+      <button class="btn-trial" onclick="openAuth('signup')">Start Free Trial →</button>
+      <button class="btn-signin" onclick="openAuth('login')">Sign In</button>
     </div>
 
-    <div class="stats-row">
-      <div><div class="stat-num">99%</div><div class="stat-desc">Less Carbon</div></div>
-      <div><div class="stat-num">60%</div><div class="stat-desc">Cost Saved</div></div>
-      <div><div class="stat-num">0ms</div><div class="stat-desc">Cold Start</div></div>
-      <div><div class="stat-num">99.9%</div><div class="stat-desc">Uptime</div></div>
+    <!-- Stats Grid (Pic 2 Exact Numbers) -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val">60%</div>
+        <div class="stat-lbl">LESS CARBON</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">40%</div>
+        <div class="stat-lbl">COST SAVED</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">0ms</div>
+        <div class="stat-lbl">COLD START</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">99.9%</div>
+        <div class="stat-lbl">UPTIME</div>
+      </div>
     </div>
-  </section>
 
-  <!-- Features Section -->
-  <section id="features" class="section">
-    <h2>Everything you need to go green</h2>
-    <p>Enterprise-grade infrastructure that automatically optimizes for sustainability.</p>
-  </section>
+    <div class="section-header" id="features">
+      <h2>Everything you need to go green</h2>
+      <p>Enterprise-grade infrastructure that automatically optimizes for sustainability.</p>
+    </div>
 
-  <!-- Pricing Section -->
-  <section id="pricing" class="section">
-    <h2>Simple, Transparent Pricing</h2>
-    <p>Start free, upgrade as you scale.</p>
+    <div class="testimonial">
+      <div class="quote">"GreenOps cut our AWS bill by 42% and helped us hit our sustainability goals 6 months early. Game changer!"</div>
+      <div class="author">— Priya Sharma, CTO at TechStartup</div>
+    </div>
   </section>
 
   <!-- Auth Modal -->
   <div id="authModal" class="modal-overlay">
     <div class="auth-card">
-      <button class="close-btn" onclick="closeAuthModal()">✕</button>
-      <h2 id="modalTitle" style="color:#FFF; font-size: 20px; margin-bottom: 6px;">Sign in to your account</h2>
-      <p id="modalSub" style="color:#94A3B8; font-size: 13px; margin-bottom: 24px;">Enter your credentials to access your portal</p>
+      <button class="close-btn" onclick="closeAuth()">✕</button>
+      <h2 id="modalTitle" style="color:#FFF; font-size: 20px; font-weight:700; margin-bottom: 6px;">Sign in to your account</h2>
+      <p id="modalSub" style="color:#94A3B8; font-size: 13px; margin-bottom: 24px;">Enter your credentials to access your dashboard</p>
 
-      <form onsubmit="executeLogin(event)">
+      <form onsubmit="executeAuth(event)">
         <div class="form-group">
-          <label>Email Address</label>
+          <label>Work Email</label>
           <input type="email" id="userEmail" placeholder="you@company.com" value="test2@test.com" required>
         </div>
         <div class="form-group">
           <label>Password</label>
           <input type="password" id="userPassword" placeholder="••••••••" value="test" required>
         </div>
-        <button type="submit" class="btn-green" style="width: 100%; padding: 12px; margin-top: 10px;">Sign In →</button>
+        <button type="submit" class="btn-get-started" style="width: 100%; padding: 14px; margin-top: 10px; font-size: 15px;">Sign In →</button>
       </form>
-      <p style="margin-top: 20px; text-align: center; font-size: 13px; color: #64748B;">
-        Don't have an account? <a onclick="openAuthModal('signup')" style="color: #22C55E; cursor: pointer; text-decoration: underline;">Sign up for free</a>
+      <p style="margin-top: 24px; text-align: center; font-size: 13px; color: #64748B;">
+        Don't have an account? <a onclick="openAuth('signup')" style="color: #22C55E; cursor: pointer; text-decoration: underline;">Sign up for free</a>
       </p>
     </div>
   </div>
 
 <script>
-// Single, Clean, Global JavaScript Engine
-window.API_BASE = 'http://localhost:8000';
-
-function openAuthModal(mode) {
+function openAuth(mode) {
   var modal = document.getElementById('authModal');
   var title = document.getElementById('modalTitle');
   var sub = document.getElementById('modalSub');
@@ -127,21 +155,21 @@ function openAuthModal(mode) {
     sub.textContent = 'Get started with free tier - no credit card needed';
   } else {
     title.textContent = 'Sign in to your account';
-    sub.textContent = 'Enter your credentials to access your portal';
+    sub.textContent = 'Enter your credentials to access your dashboard';
   }
   modal.classList.add('active');
 }
 
-function closeAuthModal() {
+function closeAuth() {
   document.getElementById('authModal').classList.remove('active');
 }
 
-function scrollToSection(id) {
+function scrollToSec(id) {
   var el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
 
-function executeLogin(e) {
+function executeAuth(e) {
   if (e && e.preventDefault) e.preventDefault();
   
   var email = document.getElementById('userEmail').value.trim().toLowerCase() || 'test2@test.com';
@@ -158,13 +186,13 @@ function executeLogin(e) {
 
   // Background API calls
   try {
-    fetch(window.API_BASE + '/api/users/update-activity', {
+    fetch('http://localhost:8000/api/users/update-activity', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: userObj.user_id })
     }).catch(function(){});
 
-    fetch(window.API_BASE + '/api/login', {
+    fetch('http://localhost:8000/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email, password: 'test' })
