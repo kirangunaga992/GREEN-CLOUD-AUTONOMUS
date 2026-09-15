@@ -5,34 +5,34 @@
 <title>My Services - GreenOps</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
-  body { background: #0B0F14; color: #e2e8f0; min-height: 100vh; padding: 20px; }
-  .container { max-width: 1200px; margin: 0 auto; }
-  .header { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
-  .header h1 { color: #22C55E; font-size: 28px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+  body { background: #0B0F14; color: #e2e8f0; min-height: 100vh; padding: 24px; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+  .header h1 { color: #22C55E; font-size: 26px; }
   .header p { color: #94a3b8; font-size: 13px; margin-top: 4px; }
-  .back { color: #3B82F6; text-decoration: none; padding: 8px 16px; border: 1px solid #3B82F6; border-radius: 6px; font-size: 13px; }
-  .back:hover { background: #3B82F6; color: white; }
+  .back { color: #3B82F6; text-decoration: none; padding: 8px 16px; border: 1px solid #1F2933; border-radius: 6px; font-size: 13px; background: #11161D; }
+  .back:hover { border-color: #3B82F6; }
 
-  .summary { background: #11161D; border: 1px solid #1F2933; padding: 20px; border-radius: 8px; margin-bottom: 25px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+  .summary { background: #11161D; border: 1px solid #1F2933; padding: 20px; border-radius: 10px; margin-bottom: 24px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
   .stat { text-align: center; }
-  .stat .label { font-size: 10px; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; margin-bottom: 5px; }
-  .stat .value { font-size: 24px; font-weight: bold; }
+  .stat .label { font-size: 10px; text-transform: uppercase; color: #94a3b8; letter-spacing: 1px; margin-bottom: 4px; }
+  .stat .value { font-size: 26px; font-weight: bold; }
   .stat.green .value { color: #22C55E; }
   .stat.yellow .value { color: #FACC15; }
   .stat.red .value { color: #EF4444; }
   .stat.blue .value { color: #3B82F6; }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-  .card { background: #11161D; border: 2px solid #1F2933; border-radius: 10px; padding: 20px; transition: all 0.3s; position: relative; overflow: hidden; }
+  .card { background: #11161D; border: 2px solid #1F2933; border-radius: 10px; padding: 20px; transition: all 0.3s; position: relative; }
   .card.active { border-color: #22C55E; background: rgba(34,197,94,0.08); box-shadow: 0 0 25px rgba(34,197,94,0.2); }
   .card-icon { font-size: 32px; margin-bottom: 12px; }
   .card-title { font-size: 16px; font-weight: bold; color: white; margin-bottom: 4px; }
   .card-desc { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
   .card-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
   .metric { background: #0B0F14; padding: 8px; border-radius: 4px; text-align: center; }
-  .metric-label { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
-  .metric-value { font-size: 13px; font-weight: bold; margin-top: 2px; }
+  .metric-label { font-size: 9px; color: #64748b; text-transform: uppercase; }
+  .metric-value { font-size: 12px; font-weight: bold; margin-top: 2px; }
   .metric.cost .metric-value { color: #FACC15; }
   .metric.carbon .metric-value { color: #EF4444; }
   .metric.power .metric-value { color: #3B82F6; }
@@ -41,226 +41,125 @@
   .toggle-label { font-size: 12px; color: #94a3b8; }
   .toggle-label.on { color: #22C55E; font-weight: bold; }
 
-  .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+  .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
   .switch input { opacity: 0; width: 0; height: 0; }
-  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #1F2933; transition: 0.3s; border-radius: 28px; }
-  .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background: white; transition: 0.3s; border-radius: 50%; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #1F2933; transition: 0.3s; border-radius: 24px; }
+  .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; transition: 0.3s; border-radius: 50%; }
   input:checked + .slider { background: #22C55E; }
   input:checked + .slider:before { transform: translateX(22px); }
 
   .status-badge { position: absolute; top: 12px; right: 12px; padding: 3px 8px; border-radius: 4px; font-size: 9px; font-weight: bold; text-transform: uppercase; }
   .status-badge.on { background: #22C55E; color: black; }
   .status-badge.off { background: #1F2933; color: #64748b; }
-
-  .info { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); padding: 12px; border-radius: 6px; font-size: 12px; color: #cbd5e1; margin-bottom: 20px; }
-  .info strong { color: #3B82F6; }
 </style>
-    <link rel="stylesheet" href="/static/greenops-theme.css">
-  </head>
+</head>
 <body>
   <div class="container">
     <div class="header">
       <div>
-        <h1>My Services</h1>
-        <p>Select which cloud services you want to use. Each service has its own cost and carbon footprint.</p>
+        <h1>My Cloud Services</h1>
+        <p>Select cloud services to use. Dashboard updates in real-time.</p>
       </div>
-      <a href="/dashboard" class="back">← Back to Dashboard</a>
+      <a href="http://localhost:3000/infrastructure" class="back">← Open Admin Dashboard</a>
     </div>
 
-    <div class="info">
-      <strong>How it works:</strong> Toggle a service ON to start using it. Your cost & carbon meter starts counting immediately. Toggle OFF to stop consumption. Admin dashboard will show your active services in real-time.
-    </div>
-
-    <div class="summary" id="summary">
-      <div class="stat green">
-        <div class="label">Active Services</div>
-        <div class="value" id="activeCount">0</div>
-      </div>
-      <div class="stat yellow">
-        <div class="label">Cost / Hour</div>
-        <div class="value" id="totalCost">$0.00</div>
-      </div>
-      <div class="stat red">
-        <div class="label">Carbon / Hour</div>
-        <div class="value" id="totalCarbon">0g</div>
-      </div>
-      <div class="stat blue">
-        <div class="label">Power Draw</div>
-        <div class="value" id="totalPower">0W</div>
-      </div>
+    <div class="summary">
+      <div class="stat green"><div class="label">Active Services</div><div class="value" id="activeCount">0</div></div>
+      <div class="stat yellow"><div class="label">Cost / Hour</div><div class="value" id="totalCost">$0.00</div></div>
+      <div class="stat red"><div class="label">Carbon / Hour</div><div class="value" id="totalCarbon">0g</div></div>
+      <div class="stat blue"><div class="label">Power Draw</div><div class="value" id="totalPower">0W</div></div>
     </div>
 
     <div class="grid" id="grid"></div>
   </div>
 
 <script>
-const ICONS = {
-  analytics: '📊',
-  ai_compute: '🤖',
-  file_storage: '📁',
-  email: '📧',
-  video: '🎥',
-  database: '��️'
-};
+var API_BASE = "http://localhost:8000";
+
+const SERVICES = [
+  { id: "analytics", name: "Analytics Server", desc: "Big data analytics", icon: "📊", cost: 0.05, carbon: 45, power: 60 },
+  { id: "ai_compute", name: "AI Compute Server", desc: "ML inference", icon: "🤖", cost: 0.20, carbon: 90, power: 120 },
+  { id: "file_storage", name: "File Storage Server", desc: "Cloud storage", icon: "📁", cost: 0.02, carbon: 20, power: 30 },
+  { id: "email", name: "Email Service", desc: "SMTP delivery", icon: "📧", cost: 0.01, carbon: 15, power: 20 },
+  { id: "video", name: "Video Streaming", desc: "Video CDN", icon: "🎥", cost: 0.15, carbon: 80, power: 100 },
+  { id: "database", name: "Database Server", desc: "SQL storage", icon: "🗄️", cost: 0.08, carbon: 50, power: 70 }
+];
 
 function getUser() {
-  try {
-    const raw = localStorage.getItem("greenops_user");
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch { return null; }
+  try { return JSON.parse(localStorage.getItem("greenops_user") || '{"user_id":"8b0af501a83bc237","name":"Test User"}'); }
+  catch { return { user_id: "8b0af501a83bc237", name: "Test User" }; }
 }
 
 async function loadServices() {
   const user = getUser();
-  if (!user) {
-    document.body.innerHTML = "<div style='padding:40px;text-align:center'><h1>Please log in first</h1><a href='/' style='color:#22C55E'>Go to login</a></div>";
-    return;
-  }
+  let activeIds = [];
 
   try {
-    // Get all services
-    const catRes = await fetch("https://approach-evaluated-health-fixed.trycloudflare.com/api/services/catalog");
-    const catalog = await catRes.json();
-    
-    // Get user's active services
-    const userRes = await fetch(`https://approach-evaluated-health-fixed.trycloudflare.com/api/services/user/${user.user_id}`);
-    const userData = await userRes.json();
-    
-    const activeIds = (userData.active_services || []).map(s => s.id);
-    
-    // Update summary
-    document.getElementById("activeCount").textContent = activeIds.length;
-    document.getElementById("totalCost").textContent = "$" + (userData.total_cost_per_hour || 0).toFixed(3);
-    document.getElementById("totalCarbon").textContent = (userData.total_carbon_per_hour || 0) + "g";
-    document.getElementById("totalPower").textContent = (userData.total_power_watts || 0) + "W";
-    
-    // Render cards
-    const grid = document.getElementById("grid");
-    grid.innerHTML = "";
-    
-    (catalog.services || []).forEach(svc => {
-      const isActive = activeIds.includes(svc.id);
-      const card = document.createElement("div");
-      card.className = "card" + (isActive ? " active" : "");
-      card.innerHTML = `
-        <span class="status-badge ${isActive ? 'on' : 'off'}">${isActive ? '● ACTIVE' : '○ OFF'}</span>
-        <div class="card-icon">${ICONS[svc.id] || '🔧'}</div>
-        <div class="card-title">${svc.name}</div>
-        <div class="card-desc">${svc.description}</div>
-        <div class="card-metrics">
-          <div class="metric cost">
-            <div class="metric-label">Cost/hr</div>
-            <div class="metric-value">$${svc.cost_per_hour}</div>
-          </div>
-          <div class="metric carbon">
-            <div class="metric-label">CO₂/hr</div>
-            <div class="metric-value">${svc.carbon_per_hour}g</div>
-          </div>
-          <div class="metric power">
-            <div class="metric-label">Power</div>
-            <div class="metric-value">${svc.power_watts}W</div>
-          </div>
-        </div>
-        <div class="toggle">
-          <span class="toggle-label ${isActive ? 'on' : ''}">${isActive ? 'Enabled' : 'Disabled'}</span>
-          <label class="switch">
-            <input type="checkbox" ${isActive ? 'checked' : ''} data-id="${svc.id}">
-            <span class="slider"></span>
-          </label>
-        </div>
-        ${isActive ? `<button data-request-id="${svc.id}" style="margin-top:10px;width:100%;padding:8px;background:#3B82F6;color:white;border:none;border-radius:4px;font-weight:bold;cursor:pointer;font-size:12px;">Send Request</button>` : ''}
-      `;
-      grid.appendChild(card);
+    const res = await fetch(`${API_BASE}/api/services/user/${user.user_id}`);
+    if (res.ok) {
+      const data = await res.json();
+      activeIds = (data.active_services || []).map(s => s.id);
+    }
+  } catch(e) {}
+
+  let totalCost = 0, totalCarbon = 0, totalPower = 0;
+
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+
+  SERVICES.forEach(svc => {
+    const isActive = activeIds.includes(svc.id);
+    if (isActive) {
+      totalCost += svc.cost;
+      totalCarbon += svc.carbon;
+      totalPower += svc.power;
+    }
+
+    const card = document.createElement("div");
+    card.className = "card" + (isActive ? " active" : "");
+    card.innerHTML = `
+      <span class="status-badge ${isActive ? 'on' : 'off'}">${isActive ? '● ACTIVE' : '○ OFF'}</span>
+      <div class="card-icon">${svc.icon}</div>
+      <div class="card-title">${svc.name}</div>
+      <div class="card-desc">${svc.desc}</div>
+      <div class="card-metrics">
+        <div class="metric cost"><div class="metric-label">Cost/hr</div><div class="metric-value">$${svc.cost}</div></div>
+        <div class="metric carbon"><div class="metric-label">CO₂/hr</div><div class="metric-value">${svc.carbon}g</div></div>
+        <div class="metric power"><div class="metric-label">Power</div><div class="metric-value">${svc.power}W</div></div>
+      </div>
+      <div class="toggle">
+        <span class="toggle-label ${isActive ? 'on' : ''}">${isActive ? 'Enabled' : 'Disabled'}</span>
+        <label class="switch">
+          <input type="checkbox" ${isActive ? 'checked' : ''} data-id="${svc.id}">
+          <span class="slider"></span>
+        </label>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  document.getElementById("activeCount").textContent = activeIds.length;
+  document.getElementById("totalCost").textContent = "$" + totalCost.toFixed(3);
+  document.getElementById("totalCarbon").textContent = totalCarbon + "g";
+  document.getElementById("totalPower").textContent = totalPower + "W";
+
+  document.querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', async (e) => {
+      const svcId = e.target.dataset.id;
+      const enable = e.target.checked;
+      try {
+        await fetch(`${API_BASE}/api/services/toggle`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: user.user_id, service_id: svcId, enable: enable })
+        });
+        setTimeout(loadServices, 200);
+      } catch (err) {}
     });
-    
-    // Attach toggle handlers
-    document.querySelectorAll('input[type=checkbox]').forEach(cb => {
-      cb.addEventListener('change', async (e) => {
-        const svcId = e.target.dataset.id;
-        const enable = e.target.checked;
-        try {
-          await fetch("https://approach-evaluated-health-fixed.trycloudflare.com/api/services/toggle", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-              user_id: user.user_id,
-              service_id: svcId,
-              enable: enable
-            })
-          });
-          setTimeout(loadServices, 300);
-        } catch (err) {
-          alert("Failed to toggle service");
-        }
-      });
-    });
-    
-    // Attach REQUEST buttons for active services
-    document.querySelectorAll('button[data-request-id]').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        const svcId = e.target.dataset.requestId;
-        e.target.disabled = true;
-        e.target.textContent = "Sending...";
-        try {
-          const r = await fetch("/api/proxy/services/request", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-              user_id: user.user_id,
-              service_id: svcId
-            })
-          });
-          const data = await r.json();
-          if (data.success) {
-            e.target.style.background = "#22C55E";
-            e.target.textContent = "✅ Success (200)";
-          } else {
-            e.target.style.background = "#EF4444";
-            e.target.textContent = `❌ ${data.error || "Failed"} (503)`;
-          }
-          setTimeout(() => {
-            e.target.disabled = false;
-            e.target.textContent = "Send Request";
-            e.target.style.background = "";
-          }, 2000);
-        } catch (err) {
-          e.target.textContent = "Error";
-        }
-      });
-    });
-    
-  } catch (err) {
-    console.error(err);
-  }
+  });
 }
 
 loadServices();
-setInterval(loadServices, 5000);
 </script>
-
-<script>
-// GreenOps Presence - keep user online
-(function() {
-  let ws = null;
-  function getUid() {
-    try {
-      const u = JSON.parse(localStorage.getItem("greenops_user") || "{}");
-      return u.user_id || null;
-    } catch { return null; }
-  }
-  function connect() {
-    const uid = getUid();
-    if (!uid) return setTimeout(connect, 3000);
-    const proto = location.protocol === "https:" ? "wss" : "ws";
-    ws = new WebSocket(`${proto}://${location.hostname}:8000/ws/presence/${uid}`);
-    ws.onclose = () => setTimeout(connect, 3000);
-    ws.onmessage = (e) => { if (e.data === "ping") try { ws.send("pong"); } catch {} };
-  }
-  connect();
-  window.addEventListener("pagehide", () => { if (ws) try { ws.close(); } catch {} });
-})();
-</script>
-
 </body>
 </html>
