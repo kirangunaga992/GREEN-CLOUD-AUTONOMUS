@@ -867,7 +867,7 @@ async def aws_proxy_ping(instance_id: str):
 
 
 @router.post("/check-ec2-idle-shutdown")
-async def check_ec2_idle_shutdown(idle_seconds: int = 120):
+async def check_ec2_idle_shutdown(idle_seconds: int = 600):
     """
     Autonomous Job:
     - If user is browsing/pinging -> Timer resets. Server STAYS ALIVE.
@@ -1054,6 +1054,75 @@ async def aws_web_proxy(instance_id: str, path: str = "", request: Request = Non
         elif state == "running" and public_ip:
             # INSTANT REDIRECT DIRECTLY TO LIVE EC2 WEBSITE
             return RedirectResponse(url=f"http://{public_ip}/{path}")
+        else:
+            return HTMLResponse(f"<h2>Server status: {state}. Refreshing...</h2><meta http-equiv='refresh' content='2'>", status_code=200)
+            
+    except Exception as e:
+        logger.error(f"aws_web_proxy error: {e}")
+        return HTMLResponse(f"<h2>Proxy Error: {str(e)}</h2>", status_code=500)
+
+
+
+@router.api_route("/aws-proxy/{instance_id}/{path:path}", methods=["GET", "POST", "OPTIONS"])
+async def aws_web_proxy(instance_id: str, path: str = "", request: Request = None):
+    try:
+        now = time.time()
+        _ec2_last_request[instance_id] = now
+        
+        database = db.get_db()
+        conn = database["cloud_connections"].find_one({"provider": "aws"})
+        if not conn:
+            return HTMLResponse("<h2>❌ No AWS account connected.</h2>", status_code=400)
+            
+        creds = assume_customer_role(conn["role_arn"], conn.get("external_id"))
+        if not creds:
+            return HTMLResponse("<h2>❌ AWS Auth Failed.</h2>", status_code=401)
+            
+        ec2 = get_ec2_client(creds, conn["region"])
+        res = ec2.describe_instances(InstanceIds=[instance_id])
+        inst = res["Reservations"][0]["Instances"][0]
+        state = inst["State"]["Name"]
+        public_ip = inst.get("PublicIpAddress")
+        
+        if state in ["stopped", "stopping"]:
+            logger.info(f"🌿 GreenOps: Starting EC2 {instance_id}...")
+            ec2.start_instances(InstanceIds=[instance_id])
+            html = """<!DOCTYPE html>
+            <html><head><title>GreenOps Scale-To-Zero</title>
+            <meta http-equiv="refresh" content="4">
+            <style>
+                body { background: #0B0F14; color: #E2E8F0; font-family: sans-serif; display: flex; height: 100vh; align-items: center; justify-content: center; margin: 0; }
+                .card { background: #11161D; border: 1px solid #22C55E; padding: 40px; border-radius: 12px; text-align: center; max-width: 480px; box-shadow: 0 0 30px rgba(34,197,94,0.2); }
+                .spinner { border: 4px solid #1F2933; border-top: 4px solid #22C55E; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                .badge { background: rgba(34,197,94,0.2); color: #22C55E; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+            </style></head>
+            <body><div class="card">
+                <span class="badge">🌱 GreenOps Scale-To-Zero</span>
+                <h2 style="margin-top: 15px;">Waking Up Server on AWS...</h2>
+                <p style="color: #94A3B8; font-size: 14px;">This server was stopped to save <b>100% energy</b>. Starting EC2...</p>
+                <div class="spinner"></div>
+                <p style="font-size: 12px; color: #22C55E;">AWS EC2 Starting... Auto-refreshing in 4s.</p>
+            </div></body></html>"""
+            return HTMLResponse(content=html, status_code=200)
+            
+        elif state == "pending":
+            html = """<!DOCTYPE html>
+            <html><head><title>Server Starting...</title>
+            <meta http-equiv="refresh" content="3">
+            <style>
+                body { background: #0B0F14; color: #E2E8F0; font-family: sans-serif; display: flex; height: 100vh; align-items: center; justify-content: center; }
+                .card { background: #11161D; border: 1px solid #3B82F6; padding: 30px; border-radius: 10px; text-align: center; }
+            </style></head>
+            <body><div class="card">
+                <h3 style="color: #3B82F6;">⚡ Booting EC2 Instance...</h3>
+                <p>Redirecting to Web Application...</p>
+            </div></body></html>"""
+            return HTMLResponse(content=html, status_code=200)
+            
+        elif state == "running" and public_ip:
+            target_url = f"http://{public_ip}/{path}" if path else f"http://{public_ip}/"
+            return RedirectResponse(url=target_url)
         else:
             return HTMLResponse(f"<h2>Server status: {state}. Refreshing...</h2><meta http-equiv='refresh' content='2'>", status_code=200)
             

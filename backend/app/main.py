@@ -7,7 +7,7 @@ import logging
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from prometheus_client import Gauge, generate_latest, CONTENT_TYPE_LATEST, REGISTRY
@@ -163,7 +163,7 @@ def run_aws_idle_checker():
     try:
         import asyncio
         from app.routes.cloud import check_ec2_idle_shutdown
-        asyncio.run(check_ec2_idle_shutdown(idle_seconds=120))
+        asyncio.run(check_ec2_idle_shutdown(idle_seconds=600))
     except Exception as e:
         logger.error(f"AWS Idle Checker error: {e}")
 
@@ -269,3 +269,76 @@ if __name__ == "__main__":
         port=config.PORT,
         log_level="info"
     )
+
+
+# ============================================
+
+
+# PORTAL DIRECT LOGIN & REGISTER ALIASES
+import hashlib
+import secrets
+from datetime import datetime, timezone
+from fastapi import Body
+
+@app.post("/api/login")
+async def direct_portal_login(payload: dict = Body(...)):
+    email = payload.get("email", "").strip().lower()
+    password = payload.get("password", "")
+    if not email or not password:
+        return {"success": False, "error": "Email and password required"}
+    
+    database = db.get_db()
+    user = database["users"].find_one({"email": email})
+    if not user:
+        return {"success": False, "error": "Invalid email or password"}
+        
+    pw_hash = hashlib.sha256((password + "greenops-salt").encode()).hexdigest()
+    if user.get("password_hash") != pw_hash and user.get("password") != password:
+        if user.get("password") != password:
+            return {"success": False, "error": "Invalid email or password"}
+    
+    database["users"].update_one(
+        {"email": email},
+        {"$set": {"is_online": True, "last_login": datetime.now(timezone.utc)}}
+    )
+    
+    return {
+        "success": True,
+        "token": "demo_token_123",
+        "user": {
+            "user_id": user.get("user_id"),
+            "name": user.get("name"),
+            "email": email
+        }
+    }
+
+@app.post("/api/register")
+async def direct_portal_register(payload: dict = Body(...)):
+    name = payload.get("name", "").strip()
+    email = payload.get("email", "").strip().lower()
+    password = payload.get("password", "")
+    if not name or not email or not password:
+        return {"success": False, "error": "All fields required"}
+        
+    database = db.get_db()
+    if database["users"].find_one({"email": email}):
+        return {"success": False, "error": "Email already registered"}
+        
+    uid = secrets.token_hex(8)
+    pw_hash = hashlib.sha256((password + "greenops-salt").encode()).hexdigest()
+    
+    user = {
+        "user_id": uid,
+        "name": name,
+        "email": email,
+        "password": password,
+        "password_hash": pw_hash,
+        "is_online": True,
+        "created_at": datetime.now(timezone.utc),
+        "total_requests": 0,
+        "total_energy_kwh": 0,
+        "total_carbon_kg": 0,
+        "total_cost_inr": 0
+    }
+    database["users"].insert_one(user)
+    return {"success": True, "token": "demo_token_123", "user": user}

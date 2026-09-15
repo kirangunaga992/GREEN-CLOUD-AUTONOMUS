@@ -288,3 +288,21 @@ async def get_recent_failures():
     except Exception as e:
         return {"success": False, "error": str(e)}
 
+
+
+# Alias routes for Gateway & EC2 compatibility
+@router.get("/proxy/services/catalog")
+async def alias_catalog():
+    return await get_services_catalog()
+
+@router.get("/proxy/services/active")
+async def alias_active():
+    return await get_all_active_services()
+
+@router.post("/proxy/services/toggle")
+async def alias_toggle(payload: dict = Body(...)):
+    return await toggle_service(payload)
+
+@router.get("/proxy/services/user/{user_id}")
+async def alias_user_services(user_id: str):
+    return await get_user_services(user_id)
