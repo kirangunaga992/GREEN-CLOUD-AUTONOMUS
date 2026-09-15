@@ -120,11 +120,11 @@ async function loadServices() {
 
   try {
     // Get all services
-    const catRes = await fetch("http://localhost:8000/api/services/catalog");
+    const catRes = await fetch("https://approach-evaluated-health-fixed.trycloudflare.com/api/services/catalog");
     const catalog = await catRes.json();
     
     // Get user's active services
-    const userRes = await fetch(`http://localhost:8000/api/services/user/${user.user_id}`);
+    const userRes = await fetch(`https://approach-evaluated-health-fixed.trycloudflare.com/api/services/user/${user.user_id}`);
     const userData = await userRes.json();
     
     const activeIds = (userData.active_services || []).map(s => s.id);
@@ -180,7 +180,7 @@ async function loadServices() {
         const svcId = e.target.dataset.id;
         const enable = e.target.checked;
         try {
-          await fetch("http://localhost:8000/api/services/toggle", {
+          await fetch("https://approach-evaluated-health-fixed.trycloudflare.com/api/services/toggle", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
