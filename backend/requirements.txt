@@ -10,3 +10,6 @@ apscheduler==3.10.4
 pandas==2.1.4
 prophet==1.1.5
 kubernetes==29.0.0
+
+boto3==1.34.34
+pytest==7.4.4

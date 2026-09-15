@@ -212,3 +212,60 @@ async def set_online(payload: dict = _pr_Body(...)):
     except Exception as e:
         return {"success": False, "error": str(e)}
 
+
+
+
+# ============================================
+# Auto-offline detection
+# Marks users as offline if no activity for 15 min
+# ============================================
+from datetime import datetime, timezone, timedelta
+
+@router.post("/check-activity")
+async def check_user_activity():
+    """Auto-mark users offline if inactive > 15 min"""
+    try:
+        database = db.get_db()
+        cutoff_time = datetime.now(timezone.utc) - timedelta(minutes=15)
+        
+        # Find users who are marked online but havent been active
+        result = database["users"].update_many(
+            {
+                "is_online": True,
+                "$or": [
+                    {"last_activity": {"$lt": cutoff_time}},
+                    {"last_activity": {"$exists": False}}
+                ]
+            },
+            {"$set": {"is_online": False}}
+        )
+        
+        return {
+            "success": True,
+            "users_marked_offline": result.modified_count
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+@router.post("/update-activity")
+async def update_user_activity(payload: dict = Body(...)):
+    """Called by frontend to update user last activity"""
+    try:
+        user_id = payload.get("user_id")
+        if not user_id:
+            return {"success": False, "error": "user_id required"}
+        
+        database = db.get_db()
+        database["users"].update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "last_activity": datetime.now(timezone.utc),
+                    "is_online": True
+                }
+            }
+        )
+        return {"success": True}
+    except Exception as e:
+        return {"success": False, "error": str(e)}

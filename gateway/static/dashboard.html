@@ -3100,6 +3100,8 @@
 
     <div class="sidebar-section">
       <div class="sidebar-heading">Tools</div>
+      
+      
       <div class="sidebar-item" onclick="openChatbot()">
         <span class="sidebar-icon">🤖</span>
         AI Assistant
@@ -5751,6 +5753,38 @@
 
   console.log("✅ GreenOps Presence v4 active");
 })();
+</script>
+
+
+<script>
+// Smart admin dashboard URL detection
+function openAdminDashboard(path) {
+  const currentHost = window.location.hostname;
+  let adminUrl;
+  
+  if (currentHost === "localhost" || currentHost === "127.0.0.1") {
+    // Local development
+    adminUrl = "http://localhost:3000" + path;
+  } else if (currentHost.includes("trycloudflare.com")) {
+    // Cloudflare tunnel - use dashboard tunnel URL
+    // User needs to enter dashboard URL first time
+    let dashUrl = localStorage.getItem("greenops_dashboard_url");
+    if (!dashUrl) {
+      dashUrl = prompt("Enter your dashboard Cloudflare URL:\n(e.g., https://effects-morning-clicks-tom.trycloudflare.com)");
+      if (dashUrl) {
+        localStorage.setItem("greenops_dashboard_url", dashUrl);
+      } else {
+        return;
+      }
+    }
+    adminUrl = dashUrl + path;
+  } else {
+    // Any other host - assume dashboard on same server, port 3000
+    adminUrl = window.location.protocol + "//" + currentHost + ":3000" + path;
+  }
+  
+  window.open(adminUrl, "_blank");
+}
 </script>
 
 </body>

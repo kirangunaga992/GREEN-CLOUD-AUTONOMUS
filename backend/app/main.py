@@ -21,6 +21,7 @@ from app.predictor import run_prediction
 from app.scaler import make_scaling_decision
 
 from app.routes import (
+    autoscaler,
     dashboard,
     metrics,
     scaling,
@@ -32,6 +33,8 @@ from app.routes import (
     presence,
     cluster,
     services,
+    auth,
+    cloud,
 )
 
 # ============================================
@@ -116,7 +119,6 @@ async def run_prediction_job():
         logger.error(f"Prediction job error: {e}")
 
 
-async def run_autoscaler_job():
     try:
         state = mc.get_current_state()
         idle_duration = mc.get_idle_duration()
@@ -155,6 +157,17 @@ async def run_autoscaler_job():
 # Lifespan
 # ============================================
 @asynccontextmanager
+
+
+def run_aws_idle_checker():
+    try:
+        import asyncio
+        from app.routes.cloud import check_ec2_idle_shutdown
+        asyncio.run(check_ec2_idle_shutdown(idle_seconds=120))
+    except Exception as e:
+        logger.error(f"AWS Idle Checker error: {e}")
+
+
 async def lifespan(app: FastAPI):
     logger.info("=" * 55)
     logger.info(f"  {config.APP_NAME} v{config.APP_VERSION}")
@@ -169,8 +182,8 @@ async def lifespan(app: FastAPI):
     scheduler = AsyncIOScheduler()
     scheduler.add_job(run_metrics_collection, "interval", seconds=10, id="metrics")
     scheduler.add_job(run_energy_job, "interval", seconds=10, id="energy")
-    scheduler.add_job(run_autoscaler_job, "interval", seconds=10, id="autoscaler")
     scheduler.add_job(run_prediction_job, "interval", seconds=60, id="prediction")
+    scheduler.add_job(run_aws_idle_checker, "interval", seconds=10, id="aws_idle")
     scheduler.start()
 
     logger.info("Scheduler started")
@@ -213,6 +226,9 @@ app.include_router(websocket.router, tags=["WebSocket"])
 app.include_router(presence.router, tags=["Presence"])
 app.include_router(cluster.router, prefix="/api/cluster", tags=["Cluster"])
 app.include_router(services.router, prefix="/api/services", tags=["Services"])
+app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
+app.include_router(cloud.router, prefix="/api/cloud", tags=["Cloud"])
+app.include_router(autoscaler.router, prefix="/api/autoscaler", tags=["Autoscaler"])
 
 # ============================================
 # Basic Endpoints

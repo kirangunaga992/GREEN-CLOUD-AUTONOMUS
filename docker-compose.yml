@@ -48,8 +48,8 @@ services:
       BACKEND_HOST: 0.0.0.0
       BACKEND_PORT: 8000
       DEBUG: "false"
-      AWS_ACCESS_KEY_ID: "YOUR_AWS_ACCESS_KEY_HERE"
-      AWS_SECRET_ACCESS_KEY: "YOUR_AWS_SECRET_KEY_HERE"
+      AWS_ACCESS_KEY_ID: "AKIA2W6EG2227TJQIIQE"
+      AWS_SECRET_ACCESS_KEY: "3/gxnbCdJHPXh4oVSaRvdTGndf7qplmFepbICS/q"
       AWS_DEFAULT_REGION: "us-east-1"
       MONGO_URI: mongodb://mongodb:27017
       MONGO_DB_NAME: greenops

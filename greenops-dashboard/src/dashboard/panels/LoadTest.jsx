@@ -14,7 +14,7 @@ export default function LoadTest() {
     setElapsed(0);
     intervalRef.current = setInterval(() => {
       for (let i = 0; i < 5; i++) {
-        fetch("http://localhost:5001/", { method: "GET" }).catch(() => {});
+        fetch("http://localhost:8000/", { method: "GET" }).catch(() => {});
       }
       setCount((c) => c + 5);
     }, 100);
